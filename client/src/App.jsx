@@ -1,8 +1,8 @@
 import React from 'react';
-import MyMap from './MyMap';
-import EnemyMap from './EnemyMap';
-import RoomCode from './RoomCode';
-import Title from './Title';
+import MyMap from './MyMap/MyMap';
+import EnemyMap from './EnemyMap/EnemyMap';
+import RoomCode from './RoomCode/RoomCode';
+import Title from './Title/Title';
 
 const App = () => {
   return (
