@@ -17,8 +17,13 @@ const RoomCode = () => {
                     width: 320,
                     height: 50,
                     display: 'flex',
+                    position: 'absolute',
+                    top: 20,
+                    left: 20,
                     justifyContent: 'space-around',
                     alignItems: 'center',
+                    alignSelf: 'center',
+                    marginRight: 'auto',
                     backgroundColor: '#000',
                     color: '#fff'
                 }

@@ -1,16 +1,20 @@
 import React from 'react';
 
-const Cell = ({ isEnemy, onClickCell, isShip }) => {
+const Cell = ({ isEnemy, x, y, isShip }) => {
+
+    const onClickCell = () => {
+        console.log(`x: ${x}, y: ${y}`);
+    }
     
     if (isEnemy) {
         return (
-            <div style={{ width: 50, height: 50, backgroundColor: "#525CEB", border: "1px solid black" }} onClick={onClickCell}>
+            <div style={{ width: 40, height: 40, border: "1px dashed black" }} onClick={onClickCell}>
                 
             </div>
         );
     } else {
         return (
-            <div style={{ width: 50, height: 50, backgroundColor: "#525CEB", border: "1px solid black" }}>
+            <div style={{ width: 40, height: 40, border: "1px dashed black" }}>
                 
             </div>
         );
