@@ -1,40 +1,25 @@
-import React, { useState } from 'react';
+import React, { useContext } from 'react';
 import Cell from '../Cell/Cell';
+import SelectPattern from '../Patterns/SelectPattern';
+import { observer } from 'mobx-react-lite';
+import { Context } from '..';
 
-const EnemyMap = () => {
-  const [gameStarted, setGameStarted] = useState(false);
-
-  const startGame = () => {
-    setGameStarted(true);
-  };
-
-  const cells = Array.from({ length: 100 }, (_, i) => (
-    <Cell key={i} isEnemy={true} x={(i % 10) + 1} y={Math.floor(i / 10) + 1} gameStarted={gameStarted} />
-  ));
+const EnemyMap = observer(() => {
+  const { game } = useContext(Context);
+  const cells = Array.from({ length: 100 }, (_, i) => {
+    let x = (i % 10) + 1;
+    let y = Math.floor(i / 10) + 1;
+    return <Cell key={i} isEnemy={true} x={x} y={y} isShip={game.enemyIncludes([x,y])} />
+  });
 
   return (
-    <div style={{ textAlign: 'center' }}>
+    <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(10, 30px)", gridAutoRows: "30px", margin: '50px auto' }}>
-        {cells.map(cell => React.cloneElement(cell, { gameStarted }))}
+        {cells}
       </div>
-      {!gameStarted && (
-        <button
-          onClick={startGame}
-          style={{
-            marginTop: 20,
-            padding: '10px 20px',
-            backgroundColor: 'black',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-          }}
-        >
-          Start Game
-        </button>
-      )}
+      {!game.gameStarted && <SelectPattern isEnemyMap={true} />}
     </div>
   );
-}
+})
 
 export default EnemyMap;

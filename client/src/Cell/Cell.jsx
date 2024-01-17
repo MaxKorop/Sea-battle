@@ -1,11 +1,23 @@
-import React, { useState } from 'react';
+import { observer } from 'mobx-react-lite';
+import React, { useContext, useState } from 'react';
+import { Context } from '..';
+import Hit from '../Hit&Miss/Hit';
+import Miss from '../Hit&Miss/Miss';
 
-const Cell = ({ isEnemy, x, y, isShip, gameStarted }) => {
+const Cell = observer(({ isEnemy, x, y, isShip }) => {
   const [showMiss, setShowMiss] = useState(false);
   const [hasClicked, setHasClicked] = useState(false);
+  const { game } = useContext(Context);
+  let cellStyles = {
+    width: 30,
+    height: 30,
+    border: "1px dashed black",
+    position: 'relative'
+  }
+  if (!isEnemy && isShip) cellStyles.backgroundColor = 'gray';
 
   const onClickCell = () => {
-    if (gameStarted && !hasClicked && isEnemy) {
+    if (game.gameStarted && !hasClicked) {
       setHasClicked(true);
 
       if (isShip) {
@@ -19,12 +31,7 @@ const Cell = ({ isEnemy, x, y, isShip, gameStarted }) => {
 
   return (
     <div
-      style={{
-        width: 30,
-        height: 30,
-        border: "1px dashed black",
-        position: 'relative',
-      }}
+      style={cellStyles}
       onClick={isEnemy ? onClickCell : undefined}
     >
       {isEnemy && showMiss && (
@@ -33,11 +40,10 @@ const Cell = ({ isEnemy, x, y, isShip, gameStarted }) => {
             position: 'absolute',
             top: '50%',
             left: '50%',
-            transform: 'translate(-50%, -50%)',
-            color: 'red',
+            transform: 'translate(-50%, -50%)'
           }}
         >
-          miss
+          <Miss />
         </div>
       )}
 
@@ -47,15 +53,14 @@ const Cell = ({ isEnemy, x, y, isShip, gameStarted }) => {
             position: 'absolute',
             top: '50%',
             left: '50%',
-            transform: 'translate(-50%, -50%)',
-            color: 'green',
+            transform: 'translate(-50%, -50%)'
           }}
         >
-          hit
+          <Hit />
         </div>
       )}
     </div>
   );
-};
+})
 
 export default Cell;
