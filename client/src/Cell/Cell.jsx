@@ -1,18 +1,16 @@
 import React, { useState } from 'react';
 
-const Cell = ({ isEnemy, x, y, isShip }) => {
+const Cell = ({ isEnemy, x, y, isShip, gameStarted }) => {
   const [showMiss, setShowMiss] = useState(false);
   const [hasClicked, setHasClicked] = useState(false);
 
   const onClickCell = () => {
-    if (!hasClicked && isEnemy) {
+    if (gameStarted && !hasClicked && isEnemy) {
       setHasClicked(true);
 
       if (isShip) {
-        // Якщо це було влучення
         console.log(x, y, 'hit');
       } else {
-        // Якщо це був промах
         setShowMiss(true);
         console.log(x, y, 'miss');
       }
@@ -29,7 +27,6 @@ const Cell = ({ isEnemy, x, y, isShip }) => {
       }}
       onClick={isEnemy ? onClickCell : undefined}
     >
-      {/* Додайте надпис "miss", якщо showMiss === true */}
       {isEnemy && showMiss && (
         <div
           style={{
@@ -37,14 +34,13 @@ const Cell = ({ isEnemy, x, y, isShip }) => {
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            color: 'red', // колір тексту
+            color: 'red',
           }}
         >
           miss
         </div>
       )}
 
-      {/* Додайте надпис "hit", якщо isShip === true та користувач клікнув */}
       {isEnemy && isShip && hasClicked && (
         <div
           style={{
@@ -52,7 +48,7 @@ const Cell = ({ isEnemy, x, y, isShip }) => {
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            color: 'green', // колір тексту
+            color: 'green',
           }}
         >
           hit
