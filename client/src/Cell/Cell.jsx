@@ -6,9 +6,16 @@ const Cell = ({ isEnemy, x, y, isShip }) => {
 
   const onClickCell = () => {
     if (!hasClicked && isEnemy) {
-      setShowMiss(true);
       setHasClicked(true);
-      console.log(x, y);
+
+      if (isShip) {
+        // Якщо це було влучення
+        console.log(x, y, 'hit');
+      } else {
+        // Якщо це був промах
+        setShowMiss(true);
+        console.log(x, y, 'miss');
+      }
     }
   };
 
@@ -34,6 +41,21 @@ const Cell = ({ isEnemy, x, y, isShip }) => {
           }}
         >
           miss
+        </div>
+      )}
+
+      {/* Додайте надпис "hit", якщо isShip === true та користувач клікнув */}
+      {isEnemy && isShip && hasClicked && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            color: 'green', // колір тексту
+          }}
+        >
+          hit
         </div>
       )}
     </div>
