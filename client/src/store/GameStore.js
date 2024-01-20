@@ -1,10 +1,10 @@
 import { makeAutoObservable } from 'mobx';
 
 export default class GameStore {
-    _shipCoords = [];
-    _enemyShipCoords = [];
-
+    
     constructor() {
+        this._shipCoords = [];
+        this._enemyShipCoords = [];
         this._gameStarted = false;
         makeAutoObservable(this);
     }
@@ -29,15 +29,15 @@ export default class GameStore {
         return this._shipCoords;
     }
 
-    setShipCoords(value) {
-        this._shipCoords = value
+    setShipCoords(shipCoords) {
+        this._shipCoords = shipCoords;
     }
 
     get enemyShipCoords() {
         return this._enemyShipCoords;
     }
 
-    setEnemyShipCoords(value) {
-        this._enemyShipCoords = value
+    setEnemyShipCoords(enemyCoords) {
+        this._enemyShipCoords = enemyCoords;
     }
 }

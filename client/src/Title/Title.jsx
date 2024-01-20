@@ -1,8 +1,9 @@
 import React from 'react';
+import './titleStyles.css';
 
 const Title = () => {
     return (
-        <div style={{display: 'flex', justifyContent: 'center', marginTop: 20, fontFamily: "Jacques Francois Shadow", fontSize: 48, fontWeight: 400}}>
+        <div className='title'>
             Sea Battle
         </div>
     );

@@ -1,0 +1,13 @@
+.map-wrapper{
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between
+}
+
+.map{
+    display: grid;
+    grid-template-columns: repeat(10, 30px);
+    grid-auto-rows: 30px;
+    margin: 50px auto
+}

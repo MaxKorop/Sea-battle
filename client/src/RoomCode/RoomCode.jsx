@@ -1,6 +1,7 @@
 import React from 'react';
 import { v4 } from 'uuid';
 import CopyIcon from './CopyIcon';
+import './roomCodeStyles.css';
 
 const RoomCode = () => {
     const randomRoomCode = v4();
@@ -11,24 +12,7 @@ const RoomCode = () => {
     })}
 
     return (
-        <div
-            style={
-                {
-                    width: 320,
-                    height: 50,
-                    display: 'flex',
-                    position: 'absolute',
-                    top: 20,
-                    left: 20,
-                    justifyContent: 'space-around',
-                    alignItems: 'center',
-                    alignSelf: 'center',
-                    marginRight: 'auto',
-                    backgroundColor: '#000',
-                    color: '#fff'
-                }
-            }
-        >
+        <div className='room-code'>
             {randomRoomCode}
             <CopyIcon onClickFunc={copyCode}/>
         </div>

@@ -1,28 +1,20 @@
 import { observer } from 'mobx-react-lite';
 import React, { useContext } from 'react';
 import { Context } from '..';
+import './startButtonStyles.css';
 
 const StartButton = observer(() => {
   const { game } = useContext(Context);
-    
+  
+  const startGame = () => {
+    game.shipCoords.length === 0 ? alert("You can't start game without placing ships") : game.setGameStarted(true);
+  }
+
   return (
     <div>
-       {!game.gameStarted && (
-        <button
-          onClick={() => game.setGameStarted(true)}
-          style={{
-            marginTop: 20,
-            padding: '10px 20px',
-            backgroundColor: 'black',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-          }}
-        >
-          Start Game
-        </button>
-      )} 
+      {!game.gameStarted && 
+        <button onClick={() => startGame()} className='button'>Start Game</button>
+      } 
     </div>
   );
 })

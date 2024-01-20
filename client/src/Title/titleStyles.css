@@ -1,0 +1,8 @@
+.title{
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    font-family: "Jacques Francois Shadow";
+    font-size: 48px;
+    font-weight: 400;
+}

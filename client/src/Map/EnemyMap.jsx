@@ -3,6 +3,7 @@ import Cell from '../Cell/Cell';
 import SelectPattern from '../Patterns/SelectPattern';
 import { observer } from 'mobx-react-lite';
 import { Context } from '..';
+import './mapStyles.css'
 
 const EnemyMap = observer(() => {
   const { game } = useContext(Context);
@@ -13,8 +14,8 @@ const EnemyMap = observer(() => {
   });
 
   return (
-    <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(10, 30px)", gridAutoRows: "30px", margin: '50px auto' }}>
+    <div className='map-wrapper'>
+      <div className='map'>
         {cells}
       </div>
       {!game.gameStarted && <SelectPattern isEnemyMap={true} />}
