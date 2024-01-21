@@ -18,11 +18,11 @@ export default class GameStore {
     }
 
     includes(value) {
-        return JSON.stringify(this._shipCoords).includes(value);
+        return JSON.parse(JSON.stringify(this._shipCoords)).some(item => item[0 ]=== value[0] && item[1] === value[1]);
     }
 
     enemyIncludes(value) {
-        return JSON.stringify(this._enemyShipCoords).includes(value);
+        return JSON.parse(JSON.stringify(this._enemyShipCoords)).some(item => item[0 ]=== value[0] && item[1] === value[1]);
     }    
 
     get shipCoords() {
