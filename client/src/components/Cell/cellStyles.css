@@ -9,6 +9,14 @@
     background-color: gray;
 }
 
+.sunken-ship{
+    background-color: rgb(35, 35, 35);
+}
+
+.miss{
+    background-color: aqua;
+}
+
 .cell-inner{
     position: absolute;
     top: 50%;

@@ -1,24 +1,35 @@
-import React, { useState, useEffect } from "react";
-import Title from "./Title/Title";
+import React, { useContext, useRef } from "react";
+import Title from "./components/Title/Title";
+import { io } from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
+import { observer } from "mobx-react-lite";
+import { Context } from ".";
+import { v4 } from "uuid";
 
-const StartPage = () => {
-  const [code, setCode] = useState("");
-  const [connected, setConnected] = useState(false);
-
+const StartPage = observer(() => {
+  const codeRef = useRef(null);
   const navigate = useNavigate();
-  const handleInputChange = (event) => {
-    setCode(event.target.value);
+  const { game } = useContext(Context);
+
+  const handleInputChange = () => {
+    game.setGameCode(codeRef.current.value);
   };
 
   const handleConnectClick = () => {
-    setConnected(true);
+    if (!game.gameCode) {
+      alert('You cannot connect without code');
+      return;
+    }
+    const socket = io('ws://localhost:5000', { query: { id: game.gameCode } });
+    game.setSocket(socket);
+    navigate('/game');
   };
 
   const handleCreateClick = () => {
-    setCode("");
-    setConnected(false);
-    navigate('/game')
+    game.setGameCode(v4());
+    const socket = io('ws://localhost:5000', { query: { id: game.gameCode } });
+    game.setSocket(socket);
+    navigate('/game');
   };
 
   return (
@@ -42,8 +53,8 @@ const StartPage = () => {
         </h1>
         <input
           type="text"
-          value={code}
-          onChange={handleInputChange}
+          ref={codeRef}
+          onChange={() => handleInputChange()}
           style={{
             width: "100%",
             height: 40,
@@ -56,7 +67,7 @@ const StartPage = () => {
         />
         <div style={{ display: "flex", justifyContent: "center" }}>
           <button
-            onClick={handleConnectClick}
+            onClick={() => handleConnectClick()}
             style={{
               backgroundColor: "#000000",
               color: "#ffffff",
@@ -68,7 +79,7 @@ const StartPage = () => {
             Connect
           </button>
           <button
-            onClick={handleCreateClick}
+            onClick={() => handleCreateClick()}
             style={{
               backgroundColor: "#000000",
               color: "#ffffff",
@@ -80,22 +91,10 @@ const StartPage = () => {
             Start Game Now!
           </button>
         </div>
-        {connected && (
-          <p
-            style={{
-              fontFamily: "Roboto",
-              fontSize: 16,
-              fontWeight: "normal",
-              color: "#000000",
-            }}
-          >
-            Підключено до сеансу з кодом: {code}
-          </p>
-        )}
       </div>
     </div>
   );
-};
+});
 
 export default StartPage;
 

@@ -1,11 +1,23 @@
 import React from 'react';
-import MyMap from './Map/MyMap';
-import EnemyMap from './Map/EnemyMap';
-import RoomCode from './RoomCode/RoomCode';
-import Title from './Title/Title';
-import StartButton from './StartButton/StartButton';
+import MyMap from './components/Map/MyMap';
+import EnemyMap from './components/Map/EnemyMap';
+import RoomCode from './components/RoomCode/RoomCode';
+import Title from './components/Title/Title';
+import StartButton from './components/StartButton/StartButton';
 
 const GamePage = () => {
+
+  const beforeUnload = event => {
+    window.setTimeout(() => {
+      window.location = '/';
+    }, 0);
+    window.onbeforeunload = null;
+  }
+
+  if (window.location.pathname === '/game') {
+    window.addEventListener('beforeunload', beforeUnload)
+  }
+
   return (
     <div>
       <RoomCode />

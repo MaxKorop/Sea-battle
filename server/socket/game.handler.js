@@ -5,24 +5,28 @@ module.exports = function (io, socket, connectedSockets) {
 
     //Подія для розставлення кораблів
     socket.on('ships:arrange', ({ ships }) => {
-        //Визначаємо індекс гравця в масиві гравців, які розставили кораблі
-        let index = players[socket.roomId].findIndex(player => player.id === socket.id && !player.hasOwnProperty("gameStarted"));
+        //Знаходимо індекси гравця та опопнента в масиві гравців даної кімнати
+        let myIndex = players[socket.roomId].findIndex(player => player.id === socket.id);
+        let enemyIndex = players[socket.roomId].findIndex(player => player.id !== socket.id && !player.hasOwnProperty("gameStarted"));
 
         //Перевірка чи гравець готовий до гри або гра розпочата (доки він готовий або гра розпочата, він не може змінювати положення свої кораблів)
-        if (index !== -1 && (players[socket.roomId][index].ready || players[socket.roomId][0].gameStarted)) {
+        if (myIndex !== -1 && (players[socket.roomId][myIndex].ready || players[socket.roomId][0].gameStarted)) {
             socket.emit('error', '❗You cannot place ships when you are ready');
             return;
         }
 
         //Якщо гравець є в списку даної кімнати, заміняємо на нові
-        if (index !== -1) players[socket.roomId][index] = { id: socket.id, ships, enemySunkenShips: [], mySunkenShips: [], myMisses: [], enemyMisses: [], ready: false, move: false};
+        if (myIndex !== -1) players[socket.roomId][myIndex] = { id: socket.id, ships, enemySunkenShips: [], mySunkenShips: [], myMisses: [], enemyMisses: [], ready: false, move: false};
             
         //Інакше додаємо гравця до масиву
         else players[socket.roomId].push({ id: socket.id, ships, enemySunkenShips: [], mySunkenShips: [], myMisses: [], enemyMisses: [], ready: false, move: false });
 
+        //Знову визначаємо індекс гравця в масиві гравців даної кімнати
+        myIndex = players[socket.roomId].findIndex(player => player.id === socket.id);
+
         //Оновлення даних на front-end
         socket.emit('update', { player: players[socket.roomId][myIndex], gameStarted: players[socket.roomId][0].gameStarted });
-        connectedSockets.filter(connSocket => connSocket.id === players[socket.roomId][enemyIndex].id)[0].emit('update', { player: players[socket.roomId][enemyIndex], gameStarted: players[socket.roomId][0].gameStarted });
+        if (enemyIndex !== -1) connectedSockets.filter(connSocket => connSocket.id === players[socket.roomId][enemyIndex]?.id)[0].emit('update', { player: players[socket.roomId][enemyIndex], gameStarted: players[socket.roomId][0].gameStarted });
     });
 
     //Подія для зміни стану готовності гравця до гри
@@ -45,7 +49,7 @@ module.exports = function (io, socket, connectedSockets) {
 
     //Подія для початку гри
     socket.on('game:start', () => {
-        if (players[socket.roomId].length < 2) {
+        if (players[socket.roomId].length < 3) {
             socket.emit('error', '❗Cannot start the game, enemy did not placed ships');
             return;
         }
@@ -98,33 +102,32 @@ module.exports = function (io, socket, connectedSockets) {
         //Знаходимо індекс координат, на яких знаходиться корабель (або його частина)
         let sunkenShipIndex = players[socket.roomId][enemyIndex].ships.findIndex(shipCoords => JSON.stringify(shipCoords) === JSON.stringify(coords));
 
-        console.log(sunkenShipIndex);
         //Перевіряємо чи існує цей індекс
         if (sunkenShipIndex !== -1) {
             //Якщо існує додаємо його до потоплених кораблів, та прибираємо його з масиву кораблів
             players[socket.roomId][enemyIndex].mySunkenShips.push(coords);
             players[socket.roomId][myIndex].enemySunkenShips.push(coords);
             players[socket.roomId][enemyIndex].ships = players[socket.roomId][enemyIndex].ships.filter(shipCell => JSON.stringify(shipCell) !== JSON.stringify(coords));
-
-            //Замінюємо можливість здійснити постріл у гравців
-            players[socket.roomId][myIndex].move = false;
-            players[socket.roomId][enemyIndex].move = true;
-
-            //Перевірка чи гравець потопив всі кораблі опонента, якщо так, виконати подію winner у переможця та loser у програвшого гравця
-            if (!players[socket.roomId][enemyIndex].ships.length) {
-                socket.emit('winner', 'You are the winner! 🎉');
-                connectedSockets.filter(connSocket => connSocket.id === players[socket.roomId][enemyIndex].id)[0].emit('loser', 'You are losed the game!');
-                players[socket.roomId] = [{ gameStarted: false }];
-                return;
-            }
+            
         } else {
             players[socket.roomId][myIndex].myMisses.push(coords);
             players[socket.roomId][enemyIndex].enemyMisses.push(coords);
+            
+            //Замінюємо можливість здійснити постріл у гравців
+            players[socket.roomId][myIndex].move = false;
+            players[socket.roomId][enemyIndex].move = true;
         }
-
         //Оновлення даних на front-end
         socket.emit('update', { player: players[socket.roomId][myIndex], gameStarted: players[socket.roomId][0].gameStarted });
         connectedSockets.filter(connSocket => connSocket.id === players[socket.roomId][enemyIndex].id)[0].emit('update', { player: players[socket.roomId][enemyIndex], gameStarted: players[socket.roomId][0].gameStarted });
+        
+        //Перевірка чи гравець потопив всі кораблі опонента, якщо так, виконати подію winner у переможця та loser у програвшого гравця
+        if (!players[socket.roomId][enemyIndex].ships.length) {
+            socket.emit('winner', 'You are the winner! 🎉');
+            connectedSockets.filter(connSocket => connSocket.id === players[socket.roomId][enemyIndex].id)[0].emit('loser', 'You are losed the game!');
+            players[socket.roomId] = [{ gameStarted: false }];
+            return;
+        }
     });
     /* Події які слухає front-end та що потрібно робити з інформацією переданою від back-end:
         * error - Виводити користувачеві інформацію про помилку яка передається у форматі тексту та блокувати дію, яку він хотів зробити
@@ -140,7 +143,7 @@ module.exports = function (io, socket, connectedSockets) {
     /* Примітка (поля об'єкта для оновлення інформації, та що вони означають):
         * id - ID сокета
         * ships - координати кораблів гравця
-        * enemySunckenShips - кораблі, які потопив гравець у свого опонента
+        * enemySunkenShips - кораблі, які потопив гравець у свого опонента
         * mySunkenShips - кораблі, які потоплені у гравця опонентом
         * myMisses - координати клітинок, в які гравець здійснив постріл, проте там не було корабля (клітинка miss)
         * enemyMisses - координати клітинок, в які опонент здійснив постріл, проте там не було корабля (клітинка miss)

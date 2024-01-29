@@ -13,18 +13,18 @@ const onConnection = async (io, socket) => {
 
         /*Викликаємо подію userConnected в кімнати (до якої приєднався користувач)
         та передаємо повідомлення що користувач приєднався*/
-        io.to(id).emit('userConnected', 'A new user has been connected to this party');
+        io.to(id).emit('user:connected', 'A new user has been connected to this party');
 
         //Зберігаємо підключений сокет в масив підключених сокетів
         connectedSockets.push(socket);
     } else {
-        socket.emit('error', { message: 'Cannot connect to party', details: 'Party already has 2 users!' });
+        socket.emit('error', 'Cannot connect to party\nParty already has 2 users!');
         socket.disconnect();
         return;
     }
     socket.on('disconnect', () => {
         //Викликаємо подію відключення користувача з кімнати, то розсилаємо повідомлення, що користувач від'єднався іншим користувачам кімнати
-        io.to(id).emit('userDisconnected', 'Someone has been disconnected from this party');
+        io.to(id).emit('user:disconnected', 'Someone has been disconnected from this party');
 
         //Видаляємо сокет з списку підключених сокетів
         connectedSockets = connectedSockets.filter(connSocket => connSocket.id !== socket.id);

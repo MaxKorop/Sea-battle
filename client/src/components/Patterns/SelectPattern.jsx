@@ -1,9 +1,9 @@
 import React, { useContext, useRef } from 'react';
 import { patterns } from './Patterns';
 import { observer } from 'mobx-react-lite';
-import { Context } from '..';
+import { Context } from '../..';
 
-const SelectPattern = observer(({ isEnemyMap }) => {
+const SelectPattern = observer(() => {
     const selectRef = useRef(null);
     const { game } = useContext(Context);
     
@@ -11,7 +11,7 @@ const SelectPattern = observer(({ isEnemyMap }) => {
         const selectedValue = selectRef.current.value
         let pattern;
         selectedValue === 'random' ? pattern = patterns[selectedValue]() : pattern = patterns[selectedValue];
-        isEnemyMap ? game.setEnemyShipCoords(pattern) : game.setShipCoords(pattern);
+        game.arrangeShips(pattern);
     }
 
     return (
