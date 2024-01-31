@@ -4,6 +4,7 @@ import {BrowserRouter, Route, Routes} from 'react-router-dom'
 import StartPage from './StartPage';
 import Login from './Login';
 import Signup from './Signup';
+import Rules from './components/Rules/Rules';
 
 const App = () => {
   return (
@@ -14,6 +15,7 @@ const App = () => {
            <Route path='/signup' element={<Signup />}/>
            <Route path='/start' element={<StartPage/>}/>
            <Route path="/game" element={<GamePage />} />
+           <Route path='/rules' element={<Rules/>}/>
          </Routes>
       </BrowserRouter>
     </div>
