@@ -10,7 +10,7 @@
 }
 
 .sunken-ship{
-    background-color: rgb(35, 35, 35);
+    background-color: rgb(35, 35, 35) !important;
 }
 
 .miss{
