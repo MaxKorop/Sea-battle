@@ -2,8 +2,8 @@ import React from 'react';
 import GamePage from './GamePage';
 import {BrowserRouter, Route, Routes} from 'react-router-dom'
 import StartPage from './StartPage';
-import Login from './Login';
-import Signup from './Signup';
+import Login from './components/Registration/Login';
+import Signup from './components/Registration/Signup';
 import Rules from './components/Rules/Rules';
 
 const App = () => {

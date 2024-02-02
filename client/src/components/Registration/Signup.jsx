@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Registration/SignupPage.css"
-import Title from "./components/Title/Title";
+import "./SignupPage.css"
+import Title from "../Title/Title";
 
 const Signup = () => {
     const navigate = useNavigate();
