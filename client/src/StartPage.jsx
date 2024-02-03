@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import Title from "./components/Title/Title";
 import { io } from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
@@ -12,17 +12,19 @@ const StartPage = observer(() => {
   const navigate = useNavigate();
   const { game } = useContext(Context);
 
-  const handleInputChange = () => {
-    game.setGameCode(codeRef.current.value);
-  };
+  useEffect(() => {
+    if (localStorage.getItem('redirect')) localStorage.setItem('redirect', false);
+  }, []);
 
   const handleConnectClick = () => {
-    if (!game.gameCode) {
+    if (!codeRef.current.value) {
       alert('You cannot connect without code');
       return;
     }
+    game.setGameCode(codeRef.current.value);
     const socket = io('ws://localhost:5000', { query: { id: game.gameCode } });
     game.setSocket(socket);
+    codeRef.current.value = '';
     navigate('/game');
   };
 
@@ -30,6 +32,7 @@ const StartPage = observer(() => {
     game.setGameCode(v4());
     const socket = io('ws://localhost:5000', { query: { id: game.gameCode } });
     game.setSocket(socket);
+    codeRef.current.value = '';
     navigate('/game');
   };
 
@@ -55,7 +58,6 @@ const StartPage = observer(() => {
         <input
           type="text"
           ref={codeRef}
-          onChange={() => handleInputChange()}
           style={{
             width: "100%",
             height: 40,

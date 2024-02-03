@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import { Context } from '../..';
 import Hit from '../Hit&Miss/Hit';
 import Miss from '../Hit&Miss/Miss';
@@ -7,12 +7,11 @@ import './cellStyles.css';
 
 const Cell = observer(({ isEnemy, x, y, isShip, isSunken, isMiss }) => {
   const cellRef = useRef(null);
-  const [hasClicked, setHasClicked] = useState(false);
   const { game } = useContext(Context);
   
   const onClickCell = () => {
-    if (game.gameStarted && game.move) {
-      setHasClicked(true);
+    console.log('click');
+    if (game.gameStarted && game.move && !game.enemySunkenIncludes([x,y])) {
       game.shot([x, y]);
     }
   };
@@ -24,10 +23,10 @@ const Cell = observer(({ isEnemy, x, y, isShip, isSunken, isMiss }) => {
     if (!isEnemy && !isSunken) cellRef.current.classList.remove('sunken-ship');
     if (!isEnemy && isMiss) cellRef.current.classList.add('miss');
     if (!isEnemy && !isMiss) cellRef.current.classList.remove('miss');
-  }, [isEnemy, isShip, isSunken, isMiss])
+  }, [isEnemy, isShip, isSunken, isMiss, game])
 
   return (
-    <div className='cell' onClick={isEnemy && !hasClicked ? onClickCell : undefined} ref={cellRef}>
+    <div className='cell' onClick={isEnemy ? () => onClickCell() : undefined} ref={cellRef}>
       {isEnemy && isMiss && 
         <Miss />
       }

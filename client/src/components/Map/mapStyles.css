@@ -9,5 +9,7 @@
     display: grid;
     grid-template-columns: repeat(10, 30px);
     grid-auto-rows: 30px;
+    column-gap: 5px;
+    row-gap: 5px;
     margin: 50px auto
 }

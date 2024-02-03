@@ -1,6 +1,6 @@
 import React from 'react';
 import GamePage from './GamePage';
-import {BrowserRouter, Route, Routes} from 'react-router-dom'
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import StartPage from './StartPage';
 import Login from './components/Registration/Login';
 import Signup from './components/Registration/Signup';

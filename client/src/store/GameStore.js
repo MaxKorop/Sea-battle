@@ -13,6 +13,8 @@ export default class GameStore {
         this._socket = null;
         this._ready = false;
         this._move = false;
+        this._message = '';
+        this._gameFinished = false;
         makeAutoObservable(this);
     }
 
@@ -106,7 +108,8 @@ export default class GameStore {
 
     setMove(status) {
         this._move = status;
-        if (this._move) alert('Your move');
+        if (this._move) this.setMessage('Your move');
+        else if (!this._move && this._gameStarted) this.setMessage('Enemy move');
     }
 
     get socket() {
@@ -117,7 +120,10 @@ export default class GameStore {
         this._socket = socket;
         socket.on('error', message => alert(message));
         socket.on('ready', status => this.setReady(status));
-        socket.on('start:game', () => socket.emit('game:start'));
+        socket.on('start:game', () => {
+            alert('Game started');
+            socket.emit('game:start');
+        });
         socket.on('update', (info) => {
             this.setGameStarted(info.gameStarted);
             this.setShipCoords(info.player.ships);
@@ -128,11 +134,33 @@ export default class GameStore {
             this.setEnemyMisses(info.player.enemyMisses);
             this.setMove(info.player.move);
         });
-        socket.on('winner', message => alert(message));
-        socket.on('loser', message => alert(message));
+        socket.on('winner', message => {
+            this.setMessage(message);
+            this.setGameFinished();
+        });
+        socket.on('loser', message => {
+            this.setMessage(message);
+            this.setGameFinished();
+        });
         socket.on('user:connected', message => console.log(message));
         socket.on('user:disconnected', message => console.log(message));
-        socket.on('disconnect', () => window.location.href = '/');
+        socket.on('disconnect', () => window.location.href = '/start');
+    }
+
+    get message() {
+        return this._message;
+    }
+
+    setMessage(message) {
+        this._message = message;
+    }
+
+    get gameFinished() {
+        return this._gameFinished;
+    }
+
+    setGameFinished() {
+        this._gameFinished = true;
     }
 
     arrangeShips(ships) {
@@ -147,17 +175,35 @@ export default class GameStore {
         this.socket.emit('shot', { coords });
     }
 
-    cleanStore() {
+    disconnect() {
+        this._socket.disconnect(true);
+    }
+
+    clearStore() {
         this._shipCoords = [];
         this._enemySunkenShips = [];
         this._mySunkenShips = [];
         this._myMisses = [];
         this._enemyMisses = [];
         this._gameStarted = false;
-        this._gameCode = '';
         this._socket = null;
         this._ready = false;
         this._move = false;
+        this._message = '';
+        this._gameFinished = false;
+    }
+
+    playAgain() {
+        this._shipCoords = [];
+        this._enemySunkenShips = [];
+        this._mySunkenShips = [];
+        this._myMisses = [];
+        this._enemyMisses = [];
+        this._gameStarted = false;
+        this._ready = false;
+        this._move = false;
+        this._message = '';
+        this._gameFinished = false;
     }
 }
 
