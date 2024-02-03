@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { observer } from "mobx-react-lite";
 import { Context } from ".";
 import { v4 } from "uuid";
+import RulesButton from "./components/Rules/RulesButton";
 
 const StartPage = observer(() => {
   const codeRef = useRef(null);
@@ -33,7 +34,7 @@ const StartPage = observer(() => {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+    <div style={{ display: "flex", flexDirection: "column", height: "100%", alignItems: "center" }}>
       <div style={{ margin: "0 auto" }}>
         <Title /> {/* Title у окремому диві */}
       </div>
@@ -74,6 +75,7 @@ const StartPage = observer(() => {
               width: "50%",
               height: 40,
               borderRadius: 5,
+              marginRight: 5,
             }}
           >
             Connect
@@ -86,11 +88,15 @@ const StartPage = observer(() => {
               width: "50%",
               height: 40,
               borderRadius: 5,
+              marginLeft: 5,
             }}
           >
             Start Game Now!
           </button>
         </div>
+      </div>
+      <div style={{ marginTop: 10, width: "100px"}}>
+        <RulesButton />
       </div>
     </div>
   );

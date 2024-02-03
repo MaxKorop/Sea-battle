@@ -5,6 +5,7 @@ import RoomCode from './components/RoomCode/RoomCode';
 import Title from './components/Title/Title';
 import StartButton from './components/StartButton/StartButton';
 
+
 const GamePage = () => {
 
   const beforeUnload = event => {
