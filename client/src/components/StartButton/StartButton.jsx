@@ -13,8 +13,8 @@ const StartButton = observer(() => {
   return (
     <div>
       {!game.gameStarted && 
-        <button onClick={() => startGame()} className='button'>Ready!</button>
-      } 
+        <button onClick={() => startGame()} className='button'>{!game.ready ? 'Ready!' : 'You are ready!'}</button>
+      }
     </div>
   );
 })

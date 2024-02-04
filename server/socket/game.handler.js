@@ -1,13 +1,11 @@
-const players = {}
-
-module.exports = function (io, socket, connectedSockets) {
+module.exports = function (io, socket, connectedSockets, players) {
     players[socket.roomId] = players[socket.roomId] || [{gameStarted: false}];
 
     //Подія для розставлення кораблів
     socket.on('ships:arrange', ({ ships }) => {
         //Знаходимо індекси гравця та опопнента в масиві гравців даної кімнати
         let myIndex = players[socket.roomId].findIndex(player => player.id === socket.id);
-        let enemyIndex = players[socket.roomId].findIndex(player => player.id !== socket.id && !player.hasOwnProperty("gameStarted"));
+        let enemyIndex = players[socket.roomId].findIndex(player => player.id !== socket.id && !Object.hasOwn(player, "gameStarted"));
 
         //Перевірка чи гравець готовий до гри або гра розпочата (доки він готовий або гра розпочата, він не може змінювати положення свої кораблів)
         if (myIndex !== -1 && (players[socket.roomId][myIndex].ready || players[socket.roomId][0].gameStarted)) {
@@ -26,7 +24,7 @@ module.exports = function (io, socket, connectedSockets) {
 
         //Оновлення даних на front-end
         socket.emit('update', { player: players[socket.roomId][myIndex], gameStarted: players[socket.roomId][0].gameStarted });
-        if (enemyIndex !== -1) connectedSockets.filter(connSocket => connSocket.id === players[socket.roomId][enemyIndex]?.id)[0].emit('update', { player: players[socket.roomId][enemyIndex], gameStarted: players[socket.roomId][0].gameStarted });
+        if (enemyIndex !== -1) io.to(players[socket.roomId][enemyIndex].id).emit('update', { player: players[socket.roomId][enemyIndex], gameStarted: players[socket.roomId][0].gameStarted });
     });
 
     //Подія для зміни стану готовності гравця до гри
@@ -67,10 +65,9 @@ module.exports = function (io, socket, connectedSockets) {
             socket.emit('error', '❗Cannot start the game, you or enemy is not ready');
             return;
         }
-
         //Оновлення даних на front-end
         socket.emit('update', { player: players[socket.roomId][myIndex], gameStarted: players[socket.roomId][0].gameStarted });
-        connectedSockets.filter(connSocket => connSocket.id === players[socket.roomId][enemyIndex].id)[0].emit('update', { player: players[socket.roomId][enemyIndex], gameStarted: players[socket.roomId][0].gameStarted });
+        io.to(players[socket.roomId][enemyIndex].id).emit('update', { player: players[socket.roomId][enemyIndex], gameStarted: players[socket.roomId][0].gameStarted });
     });
 
     //Подія для пострілу
@@ -117,14 +114,15 @@ module.exports = function (io, socket, connectedSockets) {
             players[socket.roomId][myIndex].move = false;
             players[socket.roomId][enemyIndex].move = true;
         }
+        
         //Оновлення даних на front-end
         socket.emit('update', { player: players[socket.roomId][myIndex], gameStarted: players[socket.roomId][0].gameStarted });
-        connectedSockets.filter(connSocket => connSocket.id === players[socket.roomId][enemyIndex].id)[0].emit('update', { player: players[socket.roomId][enemyIndex], gameStarted: players[socket.roomId][0].gameStarted });
-        
+        io.to(players[socket.roomId][enemyIndex].id).emit('update', { player: players[socket.roomId][enemyIndex], gameStarted: players[socket.roomId][0].gameStarted });
+
         //Перевірка чи гравець потопив всі кораблі опонента, якщо так, виконати подію winner у переможця та loser у програвшого гравця
         if (!players[socket.roomId][enemyIndex].ships.length) {
             socket.emit('winner', 'You are the winner! 🎉');
-            connectedSockets.filter(connSocket => connSocket.id === players[socket.roomId][enemyIndex].id)[0].emit('loser', 'You are losed the game!');
+            io.to(players[socket.roomId][enemyIndex].id).emit('loser', 'You are losed the game!');
             players[socket.roomId] = [{ gameStarted: false }];
             return;
         }
