@@ -2,14 +2,21 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Title from "../Title/Title";
 import './loginPage.css'
+import axios from "axios";
 
 const Login = () => {
     const navigate = useNavigate();
     const [login, setLogin] = useState(""); // Стан для зберігання значення логіна
     const [password, setPassword] = useState(""); // Стан для зберігання значення пароля
 
-    const handleNavigateToStartPage = () => {
-        navigate('/start'); 
+    const handleLogin = async () => {
+        try {
+            const response = await axios.post('/login', { username, password }); // Відправка POST-запиту з логіном та паролем
+            console.log(response.data); // Виведення в консоль отриманої відповіді
+            navigate('/start'); // Перенаправлення на початкову сторінку після успішного входу
+        } catch (error) {
+            console.error(error); // Виведення в консоль помилки, якщо вона виникла під час входу
+        }
     };
 
     const handleNavigateToSignupPage = () => {
@@ -43,7 +50,7 @@ const Login = () => {
                     />
                 </div>
             </div>
-            <button className="login-button" onClick={handleNavigateToStartPage}>Login</button>
+            <button className="login-button" onClick={handleLogin}>Login</button>
             <div className="signup-link">
                 Don't have an account? <button className="signup-button" onClick={handleNavigateToSignupPage}>Sign up</button>
             </div>

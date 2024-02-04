@@ -2,13 +2,20 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./SignupPage.css"
 import Title from "../Title/Title";
+import axios from "axios";
 
 const Signup = () => {
     const navigate = useNavigate();
     const [username, setUsername] = useState(""); // Стан для зберігання імені користувача
     const [password, setPassword] = useState(""); // Стан для зберігання пароля
-    const handleNavigateToStartPage = () => {
-        navigate('/start'); 
+    const handleLogin = async () => {
+        try {
+            const response = await axios.post('/login', { username, password }); // Відправка POST-запиту з логіном та паролем
+            console.log(response.data); // Виведення в консоль отриманої відповіді
+            navigate('/start'); // Перенаправлення на початкову сторінку після успішного входу
+        } catch (error) {
+            console.error(error); // Виведення в консоль помилки, якщо вона виникла під час входу
+        }
     };
 
 
@@ -39,7 +46,7 @@ const Signup = () => {
                         onChange={(e) => setPassword(e.target.value)} 
                     />
                 </div>
-                <button className="Signup-button" onClick={handleNavigateToStartPage}>Sign up</button>
+                <button className="Signup-button" onClick={handleLogin}>Sign up</button>
             </div>
         </div>
     );
