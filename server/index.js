@@ -5,6 +5,7 @@ const { createServer } = require('http');
 const { Server } = require('socket.io');
 const onConnection = require('./socket/onConnection');
 const router = require('./routes/index');
+const mongoose = require('mongoose');
 
 const app = express();
 
@@ -22,10 +23,18 @@ const io = new Server(server, {
 });
 const PORT = process.env.PORT || 5000;
 
+const runServer = () => {
+    mongoose.connect(process.env.CONNECTION_STRING)
+        .then(console.log('🌿 MongoDB connected'))
+        .catch(err => console.log(`❗ Mongoose error: ${err}`));
+
+    server.listen(PORT, () => {
+        console.log(`🚀 Server started on port ${PORT}`);
+    });
+}
+
 io.on('connection', socket => {
     onConnection(io, socket);
 });
 
-server.listen(PORT, () => {
-    console.log(`🚀 Server started on port ${PORT}`);
-});
+runServer();
