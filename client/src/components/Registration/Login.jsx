@@ -11,7 +11,7 @@ const Login = () => {
 
     const handleLogin = async () => {
         try {
-            const response = await axios.post('/login', { login, password }); // Відправка POST-запиту з логіном та паролем
+            const response = await axios.post('http://localhost:5000/api/login', { login, password }); // Відправка POST-запиту з логіном та паролем
             console.log(response.data); // Виведення в консоль отриманої відповіді
             navigate('/start'); // Перенаправлення на початкову сторінку після успішного входу
         } catch (error) {

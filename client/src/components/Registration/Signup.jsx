@@ -6,11 +6,11 @@ import axios from "axios";
 
 const Signup = () => {
     const navigate = useNavigate();
-    const [username, setUsername] = useState(""); // Стан для зберігання імені користувача
+    const [login, setLogin] = useState(""); // Стан для зберігання імені користувача
     const [password, setPassword] = useState(""); // Стан для зберігання пароля
     const handleLogin = async () => {
         try {
-            const response = await axios.post('/login', { username, password }); // Відправка POST-запиту з логіном та паролем
+            const response = await axios.post('http://localhost:5000/api/signup', { login, password }); // Відправка POST-запиту з логіном та паролем
             console.log(response.data); // Виведення в консоль отриманої відповіді
             navigate('/start'); // Перенаправлення на початкову сторінку після успішного входу
         } catch (error) {
@@ -25,14 +25,15 @@ const Signup = () => {
             <h2>Sign up</h2>
             <div className="signup-form">
                 <div className="input-group">
-                    <label htmlFor="username"></label>
+                    <label htmlFor="login"></label>
                     <input 
                         type="text" 
-                        id="username" 
-                        placeholder="Enter your username" 
+                        id="login" 
+                        placeholder="Enter your login" 
                         className="input-field" 
-                        value={username} 
-                        onChange={(e) => setUsername(e.target.value)} 
+                        value={login} 
+                        onChange={(e) => setLogin
+                    (e.target.value)} 
                     />
                 </div>
                 <div className="input-group">

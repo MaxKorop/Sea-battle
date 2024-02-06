@@ -121,7 +121,6 @@ export default class GameStore {
         socket.on('error', message => alert(message));
         socket.on('ready', status => this.setReady(status));
         socket.on('start:game', () => {
-            alert('Game started');
             socket.emit('game:start');
         });
         socket.on('update', (info) => {

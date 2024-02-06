@@ -10,7 +10,6 @@ const Cell = observer(({ isEnemy, x, y, isShip, isSunken, isMiss }) => {
   const { game } = useContext(Context);
   
   const onClickCell = () => {
-    console.log('click');
     if (game.gameStarted && game.move && !game.enemySunkenIncludes([x,y])) {
       game.shot([x, y]);
     }
