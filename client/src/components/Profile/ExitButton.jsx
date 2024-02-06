@@ -1,27 +1,26 @@
 import React from "react";
 import { useNavigate } from 'react-router-dom';
 
-const ProfileButton = () => {
+const ExitButton = ({ onClick }) => {
     const navigate = useNavigate();
-    const CheckProfilePage = () => {
-        navigate('/profile')
+    const ExitClick = () => {
+        navigate('/start')
     }
     return (
         <button
             className="rules-button"
-            onClick={CheckProfilePage}
+            onClick={ExitClick}
             style={{
                 backgroundColor: "#000000",
                 color: "#ffffff",
-                width: "100%",
                 height: 40,
                 borderRadius: 5,
-                marginTop: 15
+                width: 80
             }}
         >
-             Check profile
+             Exit      
         </button>
     );
-}
+};
 
-export default ProfileButton
+export default ExitButton;
