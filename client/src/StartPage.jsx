@@ -6,6 +6,7 @@ import { observer } from "mobx-react-lite";
 import { Context } from ".";
 import { v4 } from "uuid";
 import RulesButton from "./components/Rules/RulesButton";
+import ProfileButton from "./components/Profile/ProfileButton";
 
 const StartPage = observer(() => {
   const codeRef = useRef(null);
@@ -97,6 +98,7 @@ const StartPage = observer(() => {
       </div>
       <div style={{ marginTop: 10, width: "100px"}}>
         <RulesButton />
+        <ProfileButton />
       </div>
     </div>
   );
