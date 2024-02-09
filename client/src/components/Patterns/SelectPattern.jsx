@@ -8,7 +8,7 @@ const SelectPattern = observer(() => {
     const { game } = useContext(Context);
     
     const arrange = () => {
-        if (!game.shipCoords.length) {
+        if (selectRef.current.value !== 'manual') {
             const selectedValue = selectRef.current.value
             let pattern;
             selectedValue === 'random' ? pattern = patterns[selectedValue]() : pattern = patterns[selectedValue];
@@ -22,6 +22,7 @@ const SelectPattern = observer(() => {
         <div>
             <label htmlFor="patterns">Select the pattern:</label>
             <select name='patterns' id="patterns" ref={selectRef}>
+                <option value="manual">Manually</option>
                 <option value="random">Randomly</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
