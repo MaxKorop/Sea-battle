@@ -7,7 +7,7 @@ export const signUp = async (login, password) => {
         return data.message;
     }
     sessionStorage.setItem('tokenInterlink', data.token);
-    return jwtDecode(data.token)
+    return jwtDecode(data.token);
 }
 
 export const logIn = async (login, password) => {
@@ -16,5 +16,5 @@ export const logIn = async (login, password) => {
         return data.message;
     }
     sessionStorage.setItem('tokenInterlink', data.token);
-    return jwtDecode(data.token)
+    return jwtDecode(data.token);
 }

@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Title from "../Title/Title";
 import './loginPage.css'
 import { logIn } from "../../http/userAPI";
+import { observer } from "mobx-react-lite";
+import { Context } from "../..";
 
-const Login = () => {
+const Login = observer(() => {
+    const { user } = useContext(Context);
     const navigate = useNavigate();
     const [login, setLogin] = useState(""); // Стан для зберігання значення логіна
     const [password, setPassword] = useState(""); // Стан для зберігання значення пароля
@@ -16,7 +19,10 @@ const Login = () => {
         try {
             const res = await logIn(login, password);
             if (typeof res === 'string') return setLoginError(res);
-            navigate('/start'); // Перенаправлення на початкову сторінку після успішного входу
+            else {
+                user.setLogin(res.login);
+                navigate('/start'); // Перенаправлення на початкову сторінку після успішного входу
+            }
         } catch (error) {
             console.error(error); // Виведення в консоль помилки, якщо вона виникла під час входу
         }
@@ -31,30 +37,30 @@ const Login = () => {
     }
 
     const handleNavigateToSignupPage = () => {
-        navigate('/signup'); 
+        navigate('/signup');
     };
 
     return (
         <div className="login-container">
-            <div><Title/></div>
+            <div><Title /></div>
             <div className="login-form">
                 <div className="input-group">
-                    {loginError && <label htmlFor="login" style={{color: 'red', fontSize: 14, alignSelf: 'flex-start', marginLeft: 10}}>{loginError}</label>}
-                    <input 
-                        type="text" 
-                        id="login" 
-                        placeholder="Enter Login" 
-                        className="input-field" 
+                    {loginError && <label htmlFor="login" style={{ color: 'red', fontSize: 14, alignSelf: 'flex-start', marginLeft: 10 }}>{loginError}</label>}
+                    <input
+                        type="text"
+                        id="login"
+                        placeholder="Enter Login"
+                        className="input-field"
                         value={login} // Значення логіна
                         onChange={(e) => setLogin(e.target.value)} // Оновлення стану логіна
                     />
                 </div>
                 <div className="input-group">
-                    {passwordError && <label htmlFor="password" style={{color: 'red', fontSize: 14, alignSelf: 'flex-start', marginLeft: 10}}>Password is not valid</label>}
-                    <input 
-                        type="password" 
-                        id="password" 
-                        placeholder="Enter Password" 
+                    {passwordError && <label htmlFor="password" style={{ color: 'red', fontSize: 14, alignSelf: 'flex-start', marginLeft: 10 }}>Password is not valid</label>}
+                    <input
+                        type="password"
+                        id="password"
+                        placeholder="Enter Password"
                         className="input-field"
                         onChange={e => validateAndSet(e)} // Оновлення стану пароля
                     />
@@ -66,7 +72,7 @@ const Login = () => {
             </div>
         </div>
     );
-};
+});
 
 export default Login;
 

@@ -28,7 +28,20 @@ const SelectPattern = observer(() => {
                 <option value="3">3</option>
                 <option value="4">4</option>
             </select>
-            <button onClick={() => arrange()}>Arrange ships</button>
+            <button
+                
+                style={{
+                    backgroundColor: "#000000",
+                    color: "#ffffff",
+                    height: 40,
+                    borderRadius: 5,
+                    width: 100,
+                    marginLeft: 10
+                }}
+                onClick={() => arrange()}
+            >
+                Arrange ships
+            </button>
         </div>
     );
 })
