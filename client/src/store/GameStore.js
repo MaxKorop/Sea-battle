@@ -203,7 +203,6 @@ export default class GameStore {
         }
         else {
             this.socket.emit('ships:arrange', { ships: this._shipCoords });
-            this._placedShips = [];
         };
     }
 
