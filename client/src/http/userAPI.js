@@ -6,7 +6,7 @@ export const signUp = async (login, password) => {
     if (data.hasOwnProperty('message')) {
         return data.message;
     }
-    localStorage.setItem('tokenInterlink', data.token);
+    sessionStorage.setItem('tokenInterlink', data.token);
     return jwtDecode(data.token);
 }
 
@@ -15,6 +15,6 @@ export const logIn = async (login, password) => {
     if (data.hasOwnProperty('message')) {
         return data.message;
     }
-    localStorage.setItem('tokenInterlink', data.token);
+    sessionStorage.setItem('tokenInterlink', data.token);
     return jwtDecode(data.token);
 }

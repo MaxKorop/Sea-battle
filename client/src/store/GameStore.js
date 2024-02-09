@@ -198,8 +198,13 @@ export default class GameStore {
     }
 
     arrangeShips(ships) {
-        if (ships) this.socket.emit('ships:arrange', { ships });
-        else this.socket.emit('ships:arrange', { ships: this._shipCoords });
+        if (ships) {
+            this.socket.emit('ships:arrange', { ships })
+        }
+        else {
+            this.socket.emit('ships:arrange', { ships: this._shipCoords });
+            this._placedShips = [];
+        };
     }
 
     readyToGame() {
