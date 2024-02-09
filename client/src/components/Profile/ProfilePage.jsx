@@ -4,11 +4,11 @@ import ExitButton from "./ExitButton";
 import './ProfilePage.css';
 import { observer } from "mobx-react-lite";
 import { Context } from "../..";
+import { jwtDecode } from "jwt-decode";
 
 const ProfilePage = observer(() => {
     const { user } = useContext(Context);
-    console.log(user.login);
-
+    const { login } = jwtDecode(localStorage.getItem('tokenInterlink'));
     return (
         <div className="profile-page">
             <div className="profile-title">
@@ -16,7 +16,7 @@ const ProfilePage = observer(() => {
             </div>
             <div className="profile-container">
                 <div className="profile-info">
-                    <p>Ім'я користувача: {user.login}</p>
+                    <p>Ім'я користувача: {login}</p>
                     <p>Кількість зіграних боїв: {user.statistic.battles}</p>
                     <p>Кількість пострілів: {user.statistic.shots}</p>
                     <p>Кількість потраплянь по кораблях противника: {user.statistic.hits}</p>
