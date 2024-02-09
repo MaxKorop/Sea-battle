@@ -13,6 +13,8 @@ const SelectPattern = observer(() => {
             let pattern;
             selectedValue === 'random' ? pattern = patterns[selectedValue]() : pattern = patterns[selectedValue];
             game.arrangeShips(pattern);
+        } else if (selectRef.current.value === 'manual' && game.shipCoords.length){
+            game.setShipCoords([]);
         } else {
             game.arrangeShips();
         }
