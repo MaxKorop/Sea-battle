@@ -8,7 +8,7 @@ const SelectPattern = observer(() => {
     const { game } = useContext(Context);
     
     const arrange = () => {
-        if (!game.shipCoords.length && selectRef.current.value !== 'manual') {
+        if (selectRef.current.value !== 'manual') {
             const selectedValue = selectRef.current.value
             let pattern;
             selectedValue === 'random' ? pattern = patterns[selectedValue]() : pattern = patterns[selectedValue];
