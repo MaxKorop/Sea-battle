@@ -1,0 +1,13 @@
+.exit-button {
+    background-color: #000000;
+    color: #ffffff;
+    height: 40px;
+    border-radius: 5px;
+    width: 80px;
+    margin-top: 20px;
+}
+
+
+.exit-button:hover {
+    background-color: blueviolet;
+}

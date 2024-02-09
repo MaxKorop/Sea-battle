@@ -130,8 +130,18 @@ export default class GameStore {
 
     setMove(status) {
         this._move = status;
-        if (this._move) this.setMessage('Your move');
-        else if (!this._move && this._gameStarted) this.setMessage('Enemy move');
+        if (this._move) {
+            this.setMessage('Your move', 'green');
+        } else if (!this._move && this._gameStarted) {
+            this.setMessage('Enemy move', 'red');
+        }
+    }
+    
+    setMessage(message, color) {
+        // Встановлюємо текст повідомлення
+        this._message = message;
+        // Встановлюємо колір тексту
+        this._messageColor = color;
     }
 
     get socket() {

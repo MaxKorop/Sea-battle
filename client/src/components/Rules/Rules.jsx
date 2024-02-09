@@ -1,5 +1,6 @@
 import React from "react";
 import "./Rules.css"
+import Back from "./Back";
 
 const Rules = () => {
     return (
@@ -30,6 +31,7 @@ const Rules = () => {
                 <li>Эсмінець - 2 клітинки.</li>
                 <li>Катер - 1 клітинка.</li>
             </ul>
+            <Back />
         </div>
     );
 }

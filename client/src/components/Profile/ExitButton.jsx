@@ -2,6 +2,7 @@ import { observer } from "mobx-react-lite";
 import React, { useContext } from "react";
 import { useNavigate } from 'react-router-dom';
 import { Context } from "../..";
+import "./ExitButton.css";
 
 const ExitButton = observer(() => {
     const { user } = useContext(Context);
@@ -14,15 +15,8 @@ const ExitButton = observer(() => {
     }
     return (
         <button
-            className="rules-button"
+            className="exit-button"
             onClick={() => logOut()}
-            style={{
-                backgroundColor: "#000000",
-                color: "#ffffff",
-                height: 40,
-                borderRadius: 5,
-                width: 80
-            }}
         >
             Log Out
         </button>
