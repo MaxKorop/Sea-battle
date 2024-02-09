@@ -5,6 +5,7 @@ import Title from "../Title/Title";
 import { signUp } from "../../http/userAPI";
 import { observer } from "mobx-react-lite";
 import { Context } from "../..";
+import ExitButton from "../Profile/ExitButton";
 
 const Signup = observer(() => {
     const { user } = useContext(Context);
@@ -62,6 +63,7 @@ const Signup = observer(() => {
                     />
                 </div>
                 <button className="Signup-button" onClick={() => handleSignup()}>Sign up</button>
+                <ExitButton />
             </div>
         </div>
     );
