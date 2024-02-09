@@ -15,7 +15,7 @@ class UserController {
         try {
             const { login, password } = req.body;
             const user = await User.findOne({ login });
-            if (user) return res.status(400).json({ message: 'User with this login already exists' });
+            if (user) return res.json({ message: 'User with this login already exists' });
             const hashedPassword = await bcrypt.hash(password, 5);
             const createdUser = await User.create({ login, password: hashedPassword });
             const token = generateToken(createdUser);
@@ -30,9 +30,9 @@ class UserController {
         try {
             const { login, password } = req.body;
             const user = await User.findOne({ login });
-            if (!user) return res.status(400).json({ message: 'User with this login does not exists' });
+            if (!user) return res.json({ message: 'User with this login does not exists' });
             const compare = await bcrypt.compare(password, user.password);
-            if (!compare) return res.status(400).json({ message: 'Incorrect login or password' });
+            if (!compare) return res.json({ message: 'Incorrect login or password' });
             const token = generateToken(user);
             return res.json({ token });
         } catch (error) {
