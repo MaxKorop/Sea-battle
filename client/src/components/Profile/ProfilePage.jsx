@@ -7,6 +7,7 @@ import { Context } from "../..";
 
 const ProfilePage = observer(() => {
     const { user } = useContext(Context);
+    console.log(user.login);
 
     return (
         <div className="profile-page">
