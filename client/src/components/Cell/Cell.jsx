@@ -25,7 +25,7 @@ const Cell = observer(({ isEnemy, x, y, isShip, isSunken, isMiss }) => {
   }, [isEnemy, isShip, isSunken, isMiss, game])
 
   return (
-    <div className='cell' onClick={isEnemy ? () => onClickCell() : undefined} ref={cellRef}>
+    <div onDragStart={e => e.preventDefault()} onDrop={e => e.preventDefault()} onMouseDown={() => game.placeShip([x,y])} onMouseUp={() => game.placeShip([x,y])} className='cell' onClick={isEnemy ? () => onClickCell() : undefined} ref={cellRef}>
       {isEnemy && isMiss && 
         <Miss />
       }

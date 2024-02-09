@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Title from "../Title/Title";
 import './loginPage.css'
-import axios from "axios";
+import { logIn } from "../../http/userAPI";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -11,8 +11,7 @@ const Login = () => {
 
     const handleLogin = async () => {
         try {
-            const response = await axios.post('http://localhost:5000/api/login', { login, password }); // Відправка POST-запиту з логіном та паролем
-            console.log(response.data); // Виведення в консоль отриманої відповіді
+            logIn(login, password);
             navigate('/start'); // Перенаправлення на початкову сторінку після успішного входу
         } catch (error) {
             console.error(error); // Виведення в консоль помилки, якщо вона виникла під час входу

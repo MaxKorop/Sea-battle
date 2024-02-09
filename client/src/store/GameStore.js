@@ -1,4 +1,5 @@
 import { makeAutoObservable } from 'mobx';
+import { battles, hit, loses, shot, wins } from '../http/gameAPI';
 
 export default class GameStore {
     
@@ -15,7 +16,25 @@ export default class GameStore {
         this._move = false;
         this._message = '';
         this._gameFinished = false;
+        this._firstCoords = [];
+        this._placedShips = [];
         makeAutoObservable(this);
+    }
+
+    get firstCoords() {
+        return this._firstCoords;
+    }
+
+    setFirstCoords(value) {
+        this._firstCoords = value;
+    }
+
+    get placedShips() {
+        return this._placedShips;
+    }
+
+    setPlacedShips(value) {
+        this._placedShips = value;
     }
 
     get gameStarted() {
@@ -59,7 +78,10 @@ export default class GameStore {
     }
 
     setEnemySunkenShips(enemyCoords) {
-        this._enemySunkenShips = enemyCoords;
+        if (JSON.stringify(this._enemySunkenShips) !== JSON.stringify(enemyCoords)) {
+            this._enemySunkenShips = enemyCoords;
+            hit();
+        }
     }
 
     get mySunkenShips() {
@@ -122,6 +144,7 @@ export default class GameStore {
         socket.on('ready', status => this.setReady(status));
         socket.on('start:game', () => {
             socket.emit('game:start');
+            battles();
         });
         socket.on('update', (info) => {
             this.setGameStarted(info.gameStarted);
@@ -136,10 +159,12 @@ export default class GameStore {
         socket.on('winner', message => {
             this.setMessage(message);
             this.setGameFinished();
+            wins();
         });
         socket.on('loser', message => {
             this.setMessage(message);
             this.setGameFinished();
+            loses();
         });
         socket.on('user:connected', message => console.log(message));
         socket.on('user:disconnected', message => console.log(message));
@@ -163,7 +188,8 @@ export default class GameStore {
     }
 
     arrangeShips(ships) {
-        this.socket.emit('ships:arrange', { ships });
+        if (ships) this.socket.emit('ships:arrange', { ships });
+        else this.socket.emit('ships:arrange', { ships: this._shipCoords });
     }
 
     readyToGame() {
@@ -172,6 +198,7 @@ export default class GameStore {
 
     shot(coords) {
         this.socket.emit('shot', { coords });
+        shot();
     }
 
     disconnect() {
@@ -190,6 +217,159 @@ export default class GameStore {
         this._move = false;
         this._message = '';
         this._gameFinished = false;
+    }
+
+    buildLine(start, end) {
+        const line = [];
+        const [startX, startY] = start;
+        const [endX, endY] = end;            
+        if (startY === endY) {
+            // Лінія паралельна горизонтальній вісі (по X)
+            const minX = Math.min(startX, endX);
+            const maxX = Math.max(startX, endX);
+            for (let x = minX; x <= maxX; x++) {
+                line.push([x, startY]);
+            }
+        } else {
+            // Лінія паралельна вертикальній вісі (по Y)
+            const minY = Math.min(startY, endY);
+            const maxY = Math.max(startY, endY);
+            for (let y = minY; y <= maxY; y++) {
+                line.push([startX, y]);
+            }
+        }
+    
+        return line;
+    }
+
+    hasNeighboringLines(mainLine, otherLines) {
+        for (const point of mainLine) {
+            const [x, y] = point;
+            
+            // Перевірка сусідніх точок
+            const neighbors = [
+                [x - 1, y],
+                [x - 1, y - 1],
+                [x - 1, y + 1],
+                [x + 1, y],
+                [x + 1, y - 1],
+                [x + 1, y + 1],
+                [x, y - 1],
+                [x, y + 1]
+            ];
+            
+            for (const neighbor of neighbors) {
+                const [nx, ny] = neighbor;
+                
+                // Перевірка, чи точка є частиною іншої лінії
+                if (otherLines.some(point => point[0] === nx && point[1] === ny)) {
+                    return true;
+                }
+            }
+        }
+    
+        return false;
+    }
+
+    placeShip(shipCoords) {
+        //Якщо є ккординати початкової точки
+        if (this._firstCoords.length) {
+            //Чи горизонтальне розташування корабля
+            if ((shipCoords[0] > JSON.parse(JSON.stringify(this._firstCoords))[0] && shipCoords[1] === JSON.parse(JSON.stringify(this._firstCoords))[1])) {
+                //Визначення довжини корабля
+                const length = Math.abs(shipCoords[0] - JSON.parse(JSON.stringify(this._firstCoords))[0]) + 1;
+                //Не можливо поставити корабель довший за 4 клітинки
+                if (length > 4) {
+                    this.setFirstCoords([]);
+                    return;
+                }
+                //Скільки кораблів даної довжини вже розставлено
+                switch (length) {
+                    case 1:
+                        if (JSON.parse(JSON.stringify(this._placedShips)).filter(item => item === length).length === 4) {
+                            this.setFirstCoords([]);
+                            return;
+                        }
+                        break
+                    case 2:
+                        if (JSON.parse(JSON.stringify(this._placedShips)).filter(item => item === length).length === 3) {
+                            this.setFirstCoords([]);
+                            return;
+                        }
+                        break
+                    case 3:
+                        if (JSON.parse(JSON.stringify(this._placedShips)).filter(item => item === length).length === 2) {
+                            this.setFirstCoords([]);
+                            return;
+                        }
+                        break
+                    case 4:
+                        if (JSON.parse(JSON.stringify(this._placedShips)).filter(item => item === length).length === 1) {
+                            this.setFirstCoords([]);
+                            return;
+                        }
+                        break
+                }
+                //Формування лінії корабля
+                const line = this.buildLine(JSON.parse(JSON.stringify(this._firstCoords)), shipCoords);
+                //Чи є у нього сусідні кораблі (відстань менше 1 клітинки)
+                if (this.hasNeighboringLines(line, JSON.parse(JSON.stringify(this._shipCoords)))) {
+                    this.setFirstCoords([]);
+                    return;
+                }
+                //Додавання координат корабля до списку всіх координат кораблів
+                this.setShipCoords([...this._shipCoords, ...line]);
+                //Додавання до списку довжин розставлених кораблів довжину даного корабля
+                this.setPlacedShips([...this._placedShips, length]);
+                //Очищення початкової координати
+                this.setFirstCoords([]);
+                return;
+            }
+            else {
+                const length = Math.abs(shipCoords[1] - JSON.parse(JSON.stringify(this._firstCoords))[1])+1;
+                if (length > 4) {
+                    this.setFirstCoords([]);
+                    return;
+                }
+                switch (length) {
+                    case 1:
+                        if (JSON.parse(JSON.stringify(this._placedShips)).filter(item => item === length).length === 4) {
+                            this.setFirstCoords([]);
+                            return;
+                        }
+                        break
+                    case 2:
+                        if (JSON.parse(JSON.stringify(this._placedShips)).filter(item => item === length).length === 3) {
+                            this.setFirstCoords([]);
+                            return;
+                        }
+                        break
+                    case 3:
+                        if (JSON.parse(JSON.stringify(this._placedShips)).filter(item => item === length).length === 2) {
+                            this.setFirstCoords([]);
+                            return;
+                        }
+                        break
+                    case 4:
+                        if (JSON.parse(JSON.stringify(this._placedShips)).filter(item => item === length).length === 1) {
+                            this.setFirstCoords([]);
+                            return;
+                        }
+                        break
+                }
+                const line = this.buildLine(JSON.parse(JSON.stringify(this._firstCoords)), shipCoords);
+                if (this.hasNeighboringLines(line, JSON.parse(JSON.stringify(this._shipCoords)))) {
+                    this.setFirstCoords([]);
+                    return;
+                }
+                this.setShipCoords([...this._shipCoords, ...line]);
+                this.setPlacedShips([...this._placedShips, length]);
+                this.setFirstCoords([]);
+                return;
+            }
+        }
+        this.setFirstCoords(shipCoords);
+        return;
     }
 
     playAgain() {

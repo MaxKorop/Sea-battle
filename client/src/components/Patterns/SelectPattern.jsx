@@ -8,10 +8,14 @@ const SelectPattern = observer(() => {
     const { game } = useContext(Context);
     
     const arrange = () => {
-        const selectedValue = selectRef.current.value
-        let pattern;
-        selectedValue === 'random' ? pattern = patterns[selectedValue]() : pattern = patterns[selectedValue];
-        game.arrangeShips(pattern);
+        if (!game.shipCoords.length) {
+            const selectedValue = selectRef.current.value
+            let pattern;
+            selectedValue === 'random' ? pattern = patterns[selectedValue]() : pattern = patterns[selectedValue];
+            game.arrangeShips(pattern);
+        } else {
+            game.arrangeShips();
+        }
     }
 
     return (
@@ -24,7 +28,7 @@ const SelectPattern = observer(() => {
                 <option value="3">3</option>
                 <option value="4">4</option>
             </select>
-            <button onClick={() => arrange()}>Arrange</button>
+            <button onClick={() => arrange()}>Arrange ships</button>
         </div>
     );
 })

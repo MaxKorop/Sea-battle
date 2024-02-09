@@ -11,7 +11,26 @@ const userSchema = new Schema({
         required: true
     },
     statistic: {
-        type: Schema.Types.Mixed
+        shots: {
+            type: Number,
+            default: 0
+        },
+        hits: {
+            type: Number,
+            default: 0
+        },
+        battles: {
+            type: Number,
+            default: 0
+        },
+        wins: {
+            type: Number,
+            default: 0
+        },
+        loses: {
+            type: Number,
+            default: 0
+        }
     }
 });
 

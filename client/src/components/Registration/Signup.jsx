@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./SignupPage.css"
 import Title from "../Title/Title";
-import axios from "axios";
+import { signUp } from "../../http/userAPI";
 
 const Signup = () => {
     const navigate = useNavigate();
@@ -10,8 +10,7 @@ const Signup = () => {
     const [password, setPassword] = useState(""); // Стан для зберігання пароля
     const handleLogin = async () => {
         try {
-            const response = await axios.post('http://localhost:5000/api/signup', { login, password }); // Відправка POST-запиту з логіном та паролем
-            console.log(response.data); // Виведення в консоль отриманої відповіді
+            signUp(login, password);
             navigate('/start'); // Перенаправлення на початкову сторінку після успішного входу
         } catch (error) {
             console.error(error); // Виведення в консоль помилки, якщо вона виникла під час входу
